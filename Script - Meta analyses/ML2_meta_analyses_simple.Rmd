@@ -1,9 +1,25 @@
+---
+title: "ManyLabs 2 meta analysis"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    highlight: haddock
+    theme: flatly
+    toc: yes
+    toc_float: yes
+---
+
+corresponding coder: Fred Hasselman (https://osf.io/ujgs6/)
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(message = FALSE,
+                      warning = FALSE)
+```
+
+# dependencies 
 
 ```{r}
-
-## META ANALYSES - MANYLABS 2 -
-#
-# corresponding coder: Fred Hasselman (https://osf.io/ujgs6/)
 
 # SETUP ----
 library(rio)
@@ -18,19 +34,31 @@ library(invctr)
 # NOTE: Don't run init() if you do not want to load, and possiblt install packages we need to run this script!!
 library(devtools)
 devtools::source_url("https://raw.githubusercontent.com/ManyLabsOpenScience/manylabRs/master/R/manylabRs_SOURCE.R")
+
 init()
 
+```
 
+# Get data
 
-# Provide root for OSFdata folder
-#dir.in <- "~/Documents/GitHub/ManyLabs2/"
-# Output directory
-dir.out <- getwd()
+```{r}
 
-# Get data ----
-ML2.key     <- get.GoogleSheet(data='ML2masteRkey')$df
+# dir.in<- "~/Documents/GitHub/ManyLabs2/"
+# # Output directory
+# dir.out <- getwd()
+# 
+# # Get data ----
+# ML2.key     <- get.GoogleSheet(data='ML2masteRkey')$df
+# 
+# outlist1 <- rio::import(file.path(dir.in,"OSFdata","!!RawData","Data_Figure_NOweird.csv"))
 
-outlist1 <- rio::import(file.path(dir.in,"OSFdata","!!RawData","Data_Figure_NOweird.csv"))
+outlist1 <- read_csv("../OSFdata/!!RawData/Data_Figure_NOweird.csv")
+
+```
+
+# Process data
+
+```{r}
 
 outlist1$online <- NA
 outlist1$online[outlist1$source.Setting%in%c("In a classroom","In a lab")] <- "lab"
@@ -41,9 +69,16 @@ outlist1$source.WEIRD.f <- factor(outlist1$source.Weird,
                             levels = c(0,1),
                             labels = c("less WEIRD","WEIRD"))
 
+```
+
+# sth
+
+```{r}
+
 rmaR0 <- rmaR1 <- rmaR2 <- dfol <- list()
 
 cnt=0
+
 for(an in unique(as.character(outlist1$analysis.name))){
 
   ID <- as.character(outlist1$analysis.name)%in%an
@@ -146,10 +181,22 @@ mods1 <-  list(nomod_uni = rmaR0,
 
 outMeta_uni <- ldply(mods1,get.MetaResults)
 
-# Write output ----
-export(outMeta_uni,file.path(dir.out,"meta_analysis_wide.xlsx"))
+```
 
-pdf(file.path(dir.out,"FunnelPerAnalysis.pdf"), paper="a4r")
+# Write output
+
+```{r}
+
+# export(outMeta_uni,file.path(dir.out,"meta_analysis_wide.xlsx"))
+
+write_rds(outMeta_uni, "outMeta_uni.rds")
+
+# pdf(file.path(dir.out,"FunnelPerAnalysis.pdf"), paper="a4r")    TODO ????
+
+```
+
+
+```{r}
 
 for(m in seq_along(dfol)){
 
