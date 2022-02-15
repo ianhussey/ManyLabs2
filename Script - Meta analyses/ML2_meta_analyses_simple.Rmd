@@ -1,3 +1,6 @@
+
+```{r}
+
 ## META ANALYSES - MANYLABS 2 -
 #
 # corresponding coder: Fred Hasselman (https://osf.io/ujgs6/)
@@ -174,5 +177,5 @@ for(m in seq_along(dfol)){
 }
 dev.off()
 
-
+```
 
